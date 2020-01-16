@@ -1,6 +1,11 @@
 #	1. Find out some way of finding names of district offices (maybe not possible without automating the browser) - https://nyks.nic.in/compile/namken.aspx
 #					Possibilities - There is a javascript command(1 liner) that executes whenever an option is clicked, Find some way to know what all commands does a browser execute after we click... search for it
 
+#TODO - This is considering single officer at each office... to have functionality for multiple, instead of keeping email for referring to database in '/success', instead have another global address as center code, or address
+"""
+Current possible probe- verify whether geolocation is working 
+"""
+
 from html_table_parser import parser_functions as parse
 import urllib.request
 from urllib.request import urlopen
@@ -14,8 +19,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 global __login
 global __name
+global __email
 __login = False
 __name = 'Login'
+__email = ''
 
 app = Flask(__name__)	#instantiating the class with __name__
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:15035@localhost/data'
@@ -29,15 +36,18 @@ class Data(db.Model):
 	address = db.Column(db.String, primary_key = True)
 	district = db.Column(db.String)#(30))
 	contact_info = db.Column(db.String, unique=True)#)
-#	latitude = db.Column(db.num)
+	latitude = db.Column(db.Float)
+	longtitude = db.Column(db.Float)
 
-	def __init__(self, name, email, passwd, address, district, contact_info):
+	def __init__(self, name, email, passwd, address, district, contact_info, latitude, longtitude):
 		self.name = name
 		self.email = email
 		self.passwd = passwd
 		self.address = address
 		self.district = district
 		self.contact_info = contact_info
+		self.latitude = latitude
+		self.longtitude = longtitude
 
 #Idea to usr different tables for all, has been dropped
 class User_Attendance(db.Model):
@@ -46,12 +56,14 @@ class User_Attendance(db.Model):
 	email = db.Column(db.String(60), primary_key = True)
 	date = db.Column(db.String, unique = True)	#May make it datetime late
 	time = db.Column(db.String)
-	location = db.Column(db.String)
+	lat_long = db.Column(db.String)
 
-	def __init__(self, name, email, date_time):
+	def __init__(self, name, email, date, time, lat_long):
 		self.name = name
 		self.email = email
-		self.date_time = date_time
+		self.date = date
+		self.time = time
+		self.lat_long = lat_long
 
 def add_to_attendance(dbase , obj_list):
 	for obj in obj_list:
@@ -70,7 +82,26 @@ def portal_login():
 
 @app.route('/success', methods = ['POST'])
 def success():
-	return render_template('success.html')
+	lat = request.form['lat']
+	lng = request.form['lng']
+	speech_verify = request.form['id_status']
+	row = Data('','','','','','','','')
+	for dat in db.session.query(Data):
+		if dat.email==__email :
+				row = dat
+	if speech_verify == "SUCCESS" and dist_between_points(str(lat)+' : '+str(lng), str(row.latitude) + ' : ' + str(row.longtitude)) < 50 :
+		name = __name
+		email = __email
+		temp = get_curr_time()
+		date = temp[0]
+		time = temp[1]
+		obj_list = []
+		obj_list.append(User_Attendance(name, email, date, time, str(lat)+' : '+str(lng) ))
+		add_to_attendance(db, obj_list)
+		return render_template('success.html', text=__name)
+	else:
+		return home()		
+
 
 @app.route('/verification', methods = ['POST'])
 def verification():
@@ -83,6 +114,7 @@ def verification():
 		for dat in db.session.query(Data):
 			if dat.passwd==pwd :
 				__name = dat.name
+				__email = dat.email
 				__login = True
 		#if db.session.query(Data).filter(Data.email == email).passwd == pwd:
 		#	__login = True
@@ -112,12 +144,18 @@ def get_curr_time():	#Returns Current Date and Time
 	result = res.read().strip()
 	strres = result.decode('utf-8')
 	ret_list = []	#(date,time)
-	ret_list.append(strres[:10])
+	date = int(strres[8:10])
 	minute = (int(strres[14:16]) + 30)%60 
-	hr = int(strres[11:13]) + 5 + int((int(strres[14:16]) + 30)/60)
+	hr = (int(strres[11:13]) + 5 + int((int(strres[14:16]) + 30)/60) )% 24
+	date += int(hr/24)
+	ret_list.append(strres[:8] + str(date))
 	ret_list.append(str(hr) + ':' + str(minute) + ':' + strres[17:])
 	print(ret_list[1]) #2020-01-16 16:45:15
 	return ret_list
+
+def dist_between_points(loc1,loc2):
+	#Code
+	return 5	#Returns distance between them in metres
 
 if __name__ == '__main__':
 	app.run(debug=True)

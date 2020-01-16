@@ -85,54 +85,6 @@
          {{ text | safe }}
        </div>
          <p class="subtitle">Officer</p>
-         <!--<button onclick="getLocation()" class="location"><i class="fa fa-map-marker"> </i><p id="gps_loc">Get Location</p></button>
-         <a onclick="getLocation()" class="location">
-         -->
-        <form method="POST" action="/success">
-          <input type="button" name="Get Location" value="Get Location" onclick="getLocation()">
-          <input style="width: 140px" placeholder="Latitude" type="number" name="lat" id="lat" readonly> <!--No need to add 'disabled', as it greys the input-->
-          <input style="width: 140px" placeholder="Longtitude" type="number" name="lng" id="lng" readonly>
-         <br>
-          <input type="button" name="record" id="record" value="VoiceID" onclick="">
-            <!--onclick -> record-->
-          <input placeholder="Identification Status" type="text" id="id_status" value="" readonly>
-<!--        <br>
-        <input type="button" value="You Can't Click Me!" name="Sample_B" id="Sample_Button" disabled= "True" >
-        -->
-        <center><img onclick="voice_identification()" class="" src="/static/img/mic-icon.png" alt="mic" width="15px" height="65px"></center>
-        <p id="Sample"></p>
-         <br>
-         <p class="icons">  <!--This 'icons' class is causing the grey colours, may remove before Hackathon-->
-            <a href="/table">
-            <span class="fa-stack fa-lg">
-                <i class="fa fa-info-circle fa-stack-1x"></i>
-            </span>
-            </a>
-            <span class="fa-stack fa-lg">
-                <i class="fa fa-stack-1x"></i>
-            </span>
-            <a>
-            <span class="fa-stack fa-lg">
-                <i class="fa fa-circle-thin fa-stack-2x"></i>
-                <i class="fa fa-check fa-stack-1x"></i>
-            </span>
-            </a>
-            <span class="fa-stack fa-lg">
-                <i class="fa fa-stack-1x"></i>
-            </span>
-            <a href="https://nyks.nic.in/" target="_blank">
-            <span class="fa-stack fa-lg">
-                <i class="fa fa-history fa-stack-2x"></i>
-                <i class="fa fa-stack-1x"></i>
-            </span>
-            </a>
-            <br>
-            <span></span>
-            <input type="submit" name="Submit" disabled="False" id="sub_btn" value="Done">
-            <!--Disable it at start itself-->
-            <span></span>
-         </p>
-        </form>
-      </div>
+         <p>Records Successfully Updated</p>
    </body>
 </html>

@@ -43,7 +43,9 @@
         }
 
         function voice_identification(){
+          var status = document.getElementById('id_status');
           //TODO - SPEECH Synthesis here
+          status.value = "SUCCESS";
           enableSubmitbtn();
         }
 
@@ -95,7 +97,7 @@
          <br>
           <input type="button" name="record" id="record" value="VoiceID" onclick="voice_identification()">
             <!--onclick -> record-->
-          <input placeholder="Identification Status" type="text" id="id_status" value="" readonly>
+          <input placeholder="Identification Status" type="text" name="id_status" id="id_status" value="" readonly> <!--Ensure value == "SUCCESS"-->
 <!--        <br>
         <input type="button" value="You Can't Click Me!" name="Sample_B" id="Sample_Button" disabled= "True" >
         -->
