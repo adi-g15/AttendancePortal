@@ -12,8 +12,10 @@ import requests
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 
-global __login;
-__login = True
+global __login
+global __name
+__login = False
+__name = 'Login'
 
 app = Flask(__name__)	#instantiating the class with __name__
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:15035@localhost/data'
@@ -27,6 +29,7 @@ class Data(db.Model):
 	address = db.Column(db.String, primary_key = True)
 	district = db.Column(db.String)#(30))
 	contact_info = db.Column(db.String, unique=True)#)
+#	latitude = db.Column(db.num)
 
 	def __init__(self, name, email, passwd, address, district, contact_info):
 		self.name = name
@@ -65,17 +68,21 @@ def home(name = 'Login'):	#Function name can be anything
 def portal_login():
 	return home()
 
+@app.route('/success', methods = ['POST'])
+def success():
+	return render_template('success.html')
+
 @app.route('/verification', methods = ['POST'])
 def verification():
 	email = request.form['user_id']
 	pwd=request.form['passwd']
-	name = ''
+	global __name
 	global __login
 	__login	= False
 	if db.session.query(Data).filter(Data.email == email).count() == 1:
 		for dat in db.session.query(Data):
 			if dat.passwd==pwd :
-				name = dat.name
+				__name = dat.name
 				__login = True
 		#if db.session.query(Data).filter(Data.email == email).passwd == pwd:
 		#	__login = True
@@ -84,7 +91,7 @@ def verification():
 	if( __login == False):
 		return portal_login()
 	else:
-		return render_template('verification.html', text=name)
+		return render_template('verification.html', text=__name)
 
 @app.route('/table')	
 def table():
