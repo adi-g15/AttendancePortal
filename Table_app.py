@@ -3,6 +3,7 @@
 
 from html_table_parser import parser_functions as parse
 import urllib.request
+from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import requests
 #import random, string
@@ -11,7 +12,7 @@ import requests
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 
-global __login
+global __login;
 __login = True
 
 app = Flask(__name__)	#instantiating the class with __name__
@@ -40,7 +41,9 @@ class User_Attendance(db.Model):
 	__tablename__ = 'attendance'
 	name = db.Column(db.String(60))
 	email = db.Column(db.String(60), primary_key = True)
-	date_time = db.Column(db.String(20))	#May make it datetime late
+	date = db.Column(db.String, unique = True)	#May make it datetime late
+	time = db.Column(db.String)
+	location = db.Column(db.String)
 
 	def __init__(self, name, email, date_time):
 		self.name = name
@@ -55,40 +58,33 @@ def add_to_attendance(dbase , obj_list):
 
 
 @app.route('/') #'/' represents the 'home_page'
-def home():	#Function name can be anything
-	temp = input("Enter number : ")
-	if __login == False:
-		print("Login is False")
-		return portal_login()
-	user = User_Attendance('Aditya Gupta', 'ag15035@gmail.com', '2020-01-16 14:09:00')
-	reg = Data('Aditya Gupta', 'ag15035@gmail.com', 'Adi@15', 'NIT Patna, Patna - 800005', 'Mahendru', 'Mobile - 8882060206')
-	res = requests.get('https://ipinfo.io/')
-	data = res.json()
-	location = '{%block curr_loc%}\n' + data['city']+'\n{%endblock%}'
-	#FUTURE - If 'location' exists in the file, first remove those lines
-	"""with open('templates/index.html','a+') as fout:
-		content = fout.read()
-		if location not in content:
-			fout.write('\n')
-			fout.write('{%block curr_loc%}\n' + data['city']+'\n'+'{%endblock%}\n')
-	"""
-	return render_template("index.html", text="Aditya")
+def home(name = 'Login'):	#Function name can be anything
+	return render_template("index.html", text=name)
 
 @app.route('/portal_login')
 def portal_login():
-	return render_template("login.html")
+	return home()
 
 @app.route('/verification', methods = ['POST'])
 def verification():
 	email = request.form['user_id']
-#	passwd = request.form[]
-	print("This is the email : " + email)
-	__login = True
-	if(__login == False):
-		print("In Verify too, login is false")
+	pwd=request.form['passwd']
+	name = ''
+	global __login
+	__login	= False
+	if db.session.query(Data).filter(Data.email == email).count() == 1:
+		for dat in db.session.query(Data):
+			if dat.passwd==pwd :
+				name = dat.name
+				__login = True
+		#if db.session.query(Data).filter(Data.email == email).passwd == pwd:
+		#	__login = True
+	else:
+		__login = False
+	if( __login == False):
 		return portal_login()
 	else:
-		return render_template('verification.html', text="Aditya")
+		return render_template('verification.html', text=name)
 
 @app.route('/table')	
 def table():
@@ -98,16 +94,23 @@ def table():
 	xhtml = f.read()
 	soup = BeautifulSoup( xhtml, 'html.parser' )
 	state_offices = soup.find( 'table', { 'datakeysname' : 'nykcode', 'id' : 'gridview1' } )
-	return str(state_offices);
+	return str(state_offices)
 
 @app.route('/about')
 def about():
 	return "This is the an Attendance System using speech verification and geolocation for verfication purposes."
 
-def get_curr_time():
+def get_curr_time():	#Returns Current Date and Time
 	res = urlopen('http://just-the-time.appspot.com/')
 	result = res.read().strip()
-	return result.decode('utf-8')
+	strres = result.decode('utf-8')
+	ret_list = []	#(date,time)
+	ret_list.append(strres[:10])
+	minute = (int(strres[14:16]) + 30)%60 
+	hr = int(strres[11:13]) + 5 + int((int(strres[14:16]) + 30)/60)
+	ret_list.append(str(hr) + ':' + str(minute) + ':' + strres[17:])
+	print(ret_list[1]) #2020-01-16 16:45:15
+	return ret_list
 
 if __name__ == '__main__':
 	app.run(debug=True)
