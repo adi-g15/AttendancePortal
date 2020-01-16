@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title></title>
+      <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/style.css")}}">
+      <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/font-awesome.css")}}">
+      <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/animate.css")}}">
+      <link rel="shortcut icon" href="{{url_for('static' ,filename="img/fav.ico")}}" type="image/x-icon">
+      <link href="https://fonts.googleapis.com/css?family=Montserrat:700" rel="stylesheet">
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="" />
+      <meta name="keywords" content=" "/>
+      <meta name="author" content="Shrinath Nayak">
+      <meta name="robots" content="index, follow" />
+   </head>
+   <body>
+      <footer class="animated fadeIn">  <!--These animations themselves are from some other on github... give copyright credit to that too-->
+         Attendance Portal
+      </footer>
+
+      <!--Card-->
+      <div class="card animated fadeIn">
+         <center><img class="center animated rollIn" src="/static/img/ava.png" alt="avatar"></center>
+         <hr>
+         <div class="name">
+            {%block name%}  <!--These blocks will get input from other html itself-->
+            {%endblock%}
+         </div>
+         <p class="subtitle">Officer</p>
+         <!--<button onclick="getLocation()" class="location"><i class="fa fa-map-marker"> </i><p id="gps_loc">Get Location</p></button>
+         <a onclick="getLocation()" class="location">
+         -->
+         <button onclick="getLocation()" disabled="True">Get Location</button>
+
+<script>
+var x = document.getElementById("demo");
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else { 
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+function showPosition(position) {
+  x.innerHTML = "Latitude: " + position.coords.latitude + 
+  "<br>Longitude: " + position.coords.longitude;
+}
+</script>
+         <a href="/location"><p class="location"><i class="fa fa-map-marker"> </i>
+            {%block curr_loc%}
+            {%endblock%}
+         </a>
+         </p>
+         <p class="icons animated pulse">
+            <a href="/table">
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-info-circle fa-stack-1x"></i>
+            </span>
+            </a>
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-stack-1x"></i>
+            </span>
+            <a href="/voice_recognize" target="_blank">
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-check fa-stack-1x"></i>
+            </span>
+            </a>
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-stack-1x"></i>
+            </span>
+            <a href="https://nyks.nic.in/" target="_blank">
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-history fa-stack-2x"></i>
+                <i class="fa fa-stack-1x"></i>
+            </span>
+            </a>
+         </p>
+      </div>
+   </body>
+</html>

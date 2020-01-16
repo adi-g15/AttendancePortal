@@ -1,0 +1,55 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <meta name="description" content="Login - Register Template">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static' ,filename="css/login.css")}}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            background-color: #F2F2F2;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container-login">
+        <div id="title">
+            <i class="material-icons lock">lock</i> Login
+        </div>
+
+        <form action="{{url_for('verify_login')}}" method = "POST">
+            <div class="input">
+                <div class="input-addon">
+                    <i class="material-icons">face</i>
+                </div>
+                <input name="user_id" id="username" placeholder="Username" type="text" required class="validate" autocomplete="off" required>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="input">
+                <div class="input-addon">
+                    <i class="material-icons">vpn_key</i>
+                </div>
+                <input name="passwd" id="password" placeholder="Password" type="password" required class="validate" autocomplete="off" required>
+            </div>
+<!--TODO - This feature not implemented, store cache files for this on system -->
+            <input type="submit" value="Log In" />
+        </form>
+<!--
+    LEAVE - Forgot Password
+        <div class="forgot-password">
+            <a href="#">Forgot your password?</a>
+        </div>
+-->
+        <div class="register">
+            <span style="color: #657575">Don't have an account yet?<br>Contact NYKS<br></span>
+            <a href="https://nyks.nic.in/"><button id="register-link">Reach Us</button></a>
+        </div>
+    </div>
+</body>
+
+</html>

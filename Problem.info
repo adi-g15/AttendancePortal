@@ -1,0 +1,8 @@
+Problem Statement Details
+----------------------------
+Description :
+	Requirement for solution : • NYKS has 623 district offices and 29 state offices across the country. • NYKS needs software by which NYKS may take the attendance of the officers working in these districts and States. • The Mobile should collect the attendance based on the location of the officer through GPS system / Geo-Location System and voice recognition or • The software should collect the attendance based on landline telephone number and voice recognition. We expect you to develop a web based app as a solution. However, it is highly recommended to also have a responsive app which can be opened in mobile view as well.
+Organisation - Ministry of Youth Affairs & Sports
+Category - Software
+Domain Bucket - Software-Web App Development
+PS Number - DK1
