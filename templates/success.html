@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<!--FURTHER - Add a 'Retries' column in the table to hold number of retries for the voice recognition, which may further be used for detecting problems for a particular user_id-->
+<!--FURTHER - Add a 'Retries' column in the table to hold number of retries for the voice recognition, which may further be used for detecting problems for a particular user_id
+Suggestion - Close the window after sometime
+-->
 <html>
    <head>
       <title>Attendance Portal</title>
@@ -18,61 +20,12 @@
           -moz-appearance:textfield;
         }
       </style>
-      <script>
-        var lt = document.getElementById("lat");
-        var lg = document.getElementById("lng");
-       function getLocation() {
-         if (navigator.geolocation) {
-           navigator.geolocation.getCurrentPosition(showPosition);
-         }
-       }
-
-        function showPosition(position) {
-          lt.value = position.coords.latitude;
-          lg.value = position.coords.longitude;
-        }
-
-        function  disableSubmitbtn() {
-          var sbtn = document.getElementById('sub_btn');
-          sbtn.disabled = true;
-        }
-
-        function enableSubmitbtn(){
-          var sbtn = document.getElementById('sub_btn');
-          sbtn.disabled = false;
-        }
-
-        function voice_identification(){
-          //TODO - SPEECH Synthesis here
-          enableSubmitbtn();
-        }
-
-//No need for Submit_Record(), that things WILL also be done by voice_identification, at end of itself, then only enable the button, and '/success' will also look into the passed variables, so as to prevent the case where the button was activated manually
-        function Submit_Record(){
-          //TODO - Check content of both input to check whether they are correct
-          //if everything alright return true
-          return true;
-          //else return false
-        }
-//Sample function for testing, remove before hackathon
-        function PrintSome(){
-          var para = document.getElementById('Sample');
-          para.innerHTML = "Hi";
-        }
-
-        function ActivateSampleButton(){
-          var s_btn = document.getElementById('Sample_Button');
-          s_btn.value="Hi";
-          s_btn.disabled = false;
-          return true;
-        }
-
-      </script>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
    </head>
    <body>
+      
       <footer class="animated fadeIn">  <!--These animations themselves are from some other on github... give copyright credit to that too-->
          Attendance Portal
       </footer>

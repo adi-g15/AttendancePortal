@@ -4,6 +4,7 @@
 #TODO - This is considering single officer at each office... to have functionality for multiple, instead of keeping email for referring to database in '/success', instead have another global address as center code, or address
 """
 Current possible probe- verify whether geolocation is working 
+TODO - Check if a person has entered at same day by checking today's date and his email id in the attendance table
 """
 
 from html_table_parser import parser_functions as parse
@@ -11,35 +12,41 @@ import urllib.request
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import requests
-#import random, string
+import random, string
 #import datetime
-
-from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request
 
 global __login
 global __name
 global __email
+global __office_id
+
+#LEARNT - Wherever you do Assignments to a variable with same name as a global one, then before that write 'global var_name', then it will make changes to the global variable
+
 __login = False
 __name = 'Login'
-__email = ''
+__email = 'nya@a.si'
+__office_id = 0
 
 app = Flask(__name__)	#instantiating the class with __name__
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:15035@localhost/data'
 db = SQLAlchemy(app)	#SQLAlchemy Object
 
-class Data(db.Model):
+class Data(db.Model):	#Table of officer names
 	__tablename__ = 'base_records'
+	office_id = db.Column(db.Integer, primary_key = True, unique = False)
 	name=db.Column(db.String)#(60))
 	email = db.Column(db.String, unique=True)#(60))
 	passwd = db.Column(db.String)#(50))
-	address = db.Column(db.String, primary_key = True)
+	address = db.Column(db.String)
 	district = db.Column(db.String)#(30))
-	contact_info = db.Column(db.String, unique=True)#)
-	latitude = db.Column(db.Float)
-	longtitude = db.Column(db.Float)
+	contact_info = db.Column(db.String)#)
+	latitude = db.Column(db.Float, nullable = False)
+	longtitude = db.Column(db.Float, nullable = False)
 
-	def __init__(self, name, email, passwd, address, district, contact_info, latitude, longtitude):
+	def __init__(self, office_id, name, email, passwd, address, district, contact_info, latitude, longtitude):
+		self.office_id = office_id
 		self.name = name
 		self.email = email
 		self.passwd = passwd
@@ -52,25 +59,21 @@ class Data(db.Model):
 #Idea to usr different tables for all, has been dropped
 class User_Attendance(db.Model):
 	__tablename__ = 'attendance'
+	office_id = db.Column(db.Integer)
 	name = db.Column(db.String(60))
 	email = db.Column(db.String(60), primary_key = True)
-	date = db.Column(db.String, unique = True)	#May make it datetime late
-	time = db.Column(db.String)
-	lat_long = db.Column(db.String)
+	date = db.Column(db.String, nullable = False)	#May make it datetime late
+	#VERY_VERY_IMP -> Make date unique for same person trying to put attendance the second (multiple) time
+	time = db.Column(db.String, nullable = False)
+	lat_long = db.Column(db.String, nullable = False)
 
-	def __init__(self, name, email, date, time, lat_long):
+	def __init__(self, office_id, name, email, date, time, lat_long):
+		self.office_id = office_id
 		self.name = name
 		self.email = email
 		self.date = date
 		self.time = time
 		self.lat_long = lat_long
-
-def add_to_attendance(dbase , obj_list):
-	for obj in obj_list:
-		if dbase.session.query(type(obj)).filter(User_Attendance.email == obj.email).count() == 0:
-			dbase.session.add(obj)
-	dbase.session.commit()
-
 
 @app.route('/') #'/' represents the 'home_page'
 def home(name = 'Login'):	#Function name can be anything
@@ -85,18 +88,16 @@ def success():
 	lat = request.form['lat']
 	lng = request.form['lng']
 	speech_verify = request.form['id_status']
-	row = Data('','','','','','','','')
+	row = Data(0,'','','','','','',0.0,0.0)
 	for dat in db.session.query(Data):
 		if dat.email==__email :
 				row = dat
 	if speech_verify == "SUCCESS" and dist_between_points(str(lat)+' : '+str(lng), str(row.latitude) + ' : ' + str(row.longtitude)) < 50 :
-		name = __name
-		email = __email
 		temp = get_curr_time()
 		date = temp[0]
 		time = temp[1]
 		obj_list = []
-		obj_list.append(User_Attendance(name, email, date, time, str(lat)+' : '+str(lng) ))
+		obj_list.append(User_Attendance(__office_id, __name, __email, date, time, str(lat)+' : '+str(lng) ))
 		add_to_attendance(db, obj_list)
 		return render_template('success.html', text=__name)
 	else:
@@ -108,14 +109,21 @@ def verification():
 	email = request.form['user_id']
 	pwd=request.form['passwd']
 	global __name
+	global __email
+	global	__office_id
 	global __login
 	__login	= False
 	if db.session.query(Data).filter(Data.email == email).count() == 1:
 		for dat in db.session.query(Data):
 			if dat.passwd==pwd :
+#				print('\n\n\n\n\nPassed\n\n\n\n\n\n')
 				__name = dat.name
-				__email = dat.email
+				__email = email
+#				print("Email is " + dat.email)
+#				print("Office_ID is " + str(dat.office_id))
+				__office_id = dat.office_id
 				__login = True
+
 		#if db.session.query(Data).filter(Data.email == email).passwd == pwd:
 		#	__login = True
 	else:
@@ -146,8 +154,9 @@ def get_curr_time():	#Returns Current Date and Time
 	ret_list = []	#(date,time)
 	date = int(strres[8:10])
 	minute = (int(strres[14:16]) + 30)%60 
-	hr = (int(strres[11:13]) + 5 + int((int(strres[14:16]) + 30)/60) )% 24
+	hr = int(strres[11:13]) + 5 + int((int(strres[14:16]) + 30)/60)
 	date += int(hr/24)
+	hr %= 60;
 	ret_list.append(strres[:8] + str(date))
 	ret_list.append(str(hr) + ':' + str(minute) + ':' + strres[17:])
 	print(ret_list[1]) #2020-01-16 16:45:15
@@ -188,17 +197,35 @@ twoD_table = parse.make2d(state_offices)
 		obj = Data(name, email, i, twoD_table[i+2][1], twoD_table[i+2][0], twoD_table[i+2][2].replace('                                 ','\n') )
 						#TODO - Deal more intelligently with the address and contact_info, ie. extract the contacts instead of replacing spaces
 		l_obj.append(obj)
-	add_to_data(db,l_obj)
-	
+	add_to_data(db,l_obj)	
+
+def create_sample_Data():
+	list_obj = []
+	for i in range(10):
+		name = randomString(5)
+		email = randomString(5)
+		pwd = randomString(4)
+		address = randomString(45)
+		district = randomString(10)
+		contact_info = randomString(45)
+		latitude = 1.00 + i
+		longtitude = 1.50 + i
+		list_obj.append(Data(i,name,email,pwd,address,district,contact_info,latitude,longtitude))
+	add_to_data(db, list_obj)
 
 def add_to_data(dbase , obj_list):
 	for obj in obj_list:
-		if dbase.session.query(Data).filter(Data.email == obj.email).count() == 0 and dbase.session.query(Data).filter(Data.address == obj.address).count() == 0 and dbase.session.query(Data).filter(Data.contact_info == obj.contact_info).count() == 0:
+		if dbase.session.query(Data).filter(Data.email == obj.email).count() == 0:
 			dbase.session.add(obj)	
 	dbase.session.commit()
+
 def randomString(stringLength=10):	#Only for Sample collection
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(stringLength))
-
-
 """
+
+def add_to_attendance(dbase , obj_list):
+	for obj in obj_list:
+		if dbase.session.query(type(obj)).filter(User_Attendance.email == obj.email).count() == 0:
+			dbase.session.add(obj)
+	dbase.session.commit()

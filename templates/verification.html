@@ -18,58 +18,7 @@
           -moz-appearance:textfield;
         }
       </style>
-      <script>
-        var lt = document.getElementById("lat");
-        var lg = document.getElementById("lng");
-       function getLocation() {
-         if (navigator.geolocation) {
-           navigator.geolocation.getCurrentPosition(showPosition);
-         }
-       }
 
-        function showPosition(position) {
-          lt.value = position.coords.latitude;
-          lg.value = position.coords.longitude;
-        }
-
-        function  disableSubmitbtn() {
-          var sbtn = document.getElementById('sub_btn');
-          sbtn.disabled = true;
-        }
-
-        function enableSubmitbtn(){
-          var sbtn = document.getElementById('sub_btn');
-          sbtn.disabled = false;
-        }
-
-        function voice_identification(){
-          var status = document.getElementById('id_status');
-          //TODO - SPEECH Synthesis here
-          status.value = "SUCCESS";
-          enableSubmitbtn();
-        }
-
-//No need for Submit_Record(), that things WILL also be done by voice_identification, at end of itself, then only enable the button, and '/success' will also look into the passed variables, so as to prevent the case where the button was activated manually
-        function Submit_Record(){
-          //TODO - Check content of both input to check whether they are correct
-          //if everything alright return true
-          return true;
-          //else return false
-        }
-//Sample function for testing, remove before hackathon
-        function PrintSome(){
-          var para = document.getElementById('Sample');
-          para.innerHTML = "Hi";
-        }
-
-        function ActivateSampleButton(){
-          var s_btn = document.getElementById('Sample_Button');
-          s_btn.value="Hi";
-          s_btn.disabled = false;
-          return true;
-        }
-
-      </script>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -92,8 +41,8 @@
          -->
         <form method="POST" action="/success">
           <input type="button" name="Get Location" value="Get Location" onclick="getLocation()">
-          <input style="width: 140px" placeholder="Latitude" type="number" name="lat" id="lat" readonly> <!--No need to add 'disabled', as it greys the input-->
-          <input style="width: 140px" placeholder="Longtitude" type="number" name="lng" id="lng" readonly>
+          <input style="width: 140px" placeholder="Latitude" type="number" name="lat" id="lat" readonly>
+          <input style="width: 140px" placeholder="Longitude" type="number" name="lng" id="lng" readonly>
          <br>
           <input type="button" name="record" id="record" value="VoiceID" onclick="voice_identification()">
             <!--onclick -> record-->
@@ -136,5 +85,62 @@
          </p>
         </form>
       </div>
+<script>
+        var lt = document.getElementById("lat");
+        var lg = document.getElementById("lng");
+
+       function getLocation() {
+        if(navigator.geolocation){
+          navigator.geolocation.getCurrentPosition(showPosition); }
+        else{
+          lt.value = "Cant get it";
+          lg.value = "0.000000";
+        }
+        }
+
+        function showPosition(position) {
+  lt.value = position.coords.latitude;
+  lg.value = position.coords.longitude;    
+        }
+
+        function  disableSubmitbtn() {
+          var sbtn = document.getElementById('sub_btn');
+          sbtn.disabled = true;
+        }
+
+        function enableSubmitbtn(){
+          var sbtn = document.getElementById('sub_btn');
+          sbtn.disabled = false;
+        }
+
+        function voice_identification(){
+          var status = document.getElementById('id_status');
+          //TODO - SPEECH Synthesis here
+          status.value = "SUCCESS";
+          enableSubmitbtn();
+        }
+
+//No need for Submit_Record(), that things WILL also be done by voice_identification, at end of itself, then only enable the button, and '/success' will also look into the passed variables, so as to prevent the case where the button was activated manually
+        function Submit_Record(){
+          //TODO - Check content of both input to check whether they are correct
+          //if everything alright return true
+          return true;
+          //else return false
+        }
+//Sample function for testing, remove before hackathon
+        function PrintSome(){
+          var para = document.getElementById('Sample');
+          para.innerHTML = "Hi";
+        }
+
+        function ActivateSampleButton(){
+          var s_btn = document.getElementById('Sample_Button');
+          s_btn.value="Hi";
+          s_btn.disabled = false;
+          return true;
+        }
+
+      </script>
+
    </body>
 </html>
