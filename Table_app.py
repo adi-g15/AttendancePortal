@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import requests
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request
-#import random, string
+import random, string
 #import datetime
 
 global __login
@@ -73,6 +73,38 @@ class User_Attendance(db.Model):
 		self.time = time
 		self.lat_long = lat_long
 
+@app.route('/create_sample')
+def create_sample_Data():
+	list_obj = []
+	for i in range(10):
+		name = randomString(5)
+		email = randomString(2) + '@' + randomString(1) + '.' + randomString(2)
+		pwd = randomString(4)
+		address = randomString(45)
+		district = randomString(10)
+		contact_info = randomString(45)
+		latitude = 1.00 + i
+		longtitude = 1.50 + i
+		list_obj.append(Data(i,name,email,pwd,address,district,contact_info,latitude,longtitude))
+	add_to_data(db, list_obj)
+	return "Sample created"
+
+def add_to_data(dbase , obj_list):
+	for obj in obj_list:
+		if dbase.session.query(Data).filter(Data.email == obj.email).count() == 0:
+			dbase.session.add(obj)	
+	dbase.session.commit()
+
+def randomString(stringLength=10):	#Only for Sample collection
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
+
+def add_to_attendance(dbase , obj_list):
+	for obj in obj_list:
+		if dbase.session.query(type(obj)).filter(User_Attendance.email == obj.email).count() == 0:
+			dbase.session.add(obj)
+	dbase.session.commit()
+
 @app.route('/') #'/' represents the 'home_page'
 def home(name = 'Login'):	#Function name can be anything
 	return render_template("index.html", text=name)
@@ -80,28 +112,6 @@ def home(name = 'Login'):	#Function name can be anything
 @app.route('/portal_login')
 def portal_login():
 	return home()
-
-@app.route('/success', methods = ['POST'])
-def success():
-	lat = request.form['lat']
-	lng = request.form['lng']
-	speech_verify = request.form['id_status']
-	row = Data(0,'','','','','','',0.0,0.0)
-	for dat in db.session.query(Data):
-		if dat.email==__email :
-				row = dat
-
-#				
-	if speech_verify == "SUCCESS" and dist_between_points(lat,lng,row.latitude,row.longtitude) < 50 :
-		temp = get_curr_time()
-		date = temp[0]
-		time = temp[1]
-		obj_list = []
-		obj_list.append(User_Attendance(__office_id, __name, __email, date, time, str(lat)+' : '+str(lng) ))
-		add_to_attendance(db, obj_list)
-		return render_template('success.html', text=__name)
-	else:
-		return home()		
 
 @app.route('/verification', methods = ['POST'])
 def verification():
@@ -131,6 +141,28 @@ def verification():
 		return portal_login()
 	else:
 		return render_template('verification.html', text=__name)
+
+@app.route('/success', methods = ['POST'])
+def success():
+	lat = request.form['lat']
+	lng = request.form['lng']
+	speech_verify = request.form['id_status']
+	row = Data(0,'','','','','','',0.0,0.0)
+	for dat in db.session.query(Data):
+		if dat.email==__email :
+				row = dat
+
+#IMPORTANT				
+	if speech_verify == "SUCCESS":# and dist_between_points(lat,lng,row.latitude,row.longtitude) < 50 :
+		temp = get_curr_time()
+		date = temp[0]
+		time = temp[1]
+		obj_list = []
+		obj_list.append(User_Attendance(__office_id, __name, __email, date, time, str(lat)+' : '+str(lng) ))
+		add_to_attendance(db, obj_list)
+		return render_template('success.html', text=__name)
+	else:
+		return home()		
 
 @app.route('/table')	
 def table():
@@ -214,34 +246,5 @@ twoD_table = parse.make2d(state_offices)
 						#TODO - Deal more intelligently with the address and contact_info, ie. extract the contacts instead of replacing spaces
 		l_obj.append(obj)
 	add_to_data(db,l_obj)	
-
-def create_sample_Data():
-	list_obj = []
-	for i in range(10):
-		name = randomString(5)
-		email = randomString(5)
-		pwd = randomString(4)
-		address = randomString(45)
-		district = randomString(10)
-		contact_info = randomString(45)
-		latitude = 1.00 + i
-		longtitude = 1.50 + i
-		list_obj.append(Data(i,name,email,pwd,address,district,contact_info,latitude,longtitude))
-	add_to_data(db, list_obj)
-
-def add_to_data(dbase , obj_list):
-	for obj in obj_list:
-		if dbase.session.query(Data).filter(Data.email == obj.email).count() == 0:
-			dbase.session.add(obj)	
-	dbase.session.commit()
-
-def randomString(stringLength=10):	#Only for Sample collection
-    letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for i in range(stringLength))
 """
 
-def add_to_attendance(dbase , obj_list):
-	for obj in obj_list:
-		if dbase.session.query(type(obj)).filter(User_Attendance.email == obj.email).count() == 0:
-			dbase.session.add(obj)
-	dbase.session.commit()

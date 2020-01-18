@@ -64,15 +64,24 @@
         var lg = document.getElementById("lng");
 
        function getLocation() {
+                lt.type = "text";
+                lg.type = "text";
+                lt.value = "Loading...";
+                lg.value = "Loading...";
+
         if(navigator.geolocation){
           navigator.geolocation.getCurrentPosition(showPosition); }
         else{
-          lt.value = "Cant get it";
-          lg.value = "0.000000";
+          lt.type = "number";
+          lg.type = "number";
+          lt.value = "-181";
+          lg.value = "-91";
         }
         }
 
         function showPosition(position) {
+          lt.type = "number";
+          lg.type = "number";
   lt.value = position.coords.latitude;
   lg.value = position.coords.longitude;    
         }
