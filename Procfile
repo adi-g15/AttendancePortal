@@ -1,0 +1,1 @@
+web: gunicorn Table_app:app

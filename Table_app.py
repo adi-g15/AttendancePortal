@@ -77,6 +77,7 @@ class User_Attendance(db.Model):
 
 @app.route('/') #'/' represents the 'home_page'
 def home(name = 'Login'):	#Function name can be anything
+	print(dist_between_points(2.3,5.4))
 	return render_template("index.html", text=name)
 
 @app.route('/portal_login')
@@ -102,7 +103,6 @@ def success():
 		return render_template('success.html', text=__name)
 	else:
 		return home()		
-
 
 @app.route('/verification', methods = ['POST'])
 def verification():
@@ -162,9 +162,26 @@ def get_curr_time():	#Returns Current Date and Time
 	print(ret_list[1]) #2020-01-16 16:45:15
 	return ret_list
 
-def dist_between_points(loc1,loc2):
-	#Code
-	return 5	#Returns distance between them in metres
+def dist_between_points(lat,lng):
+	import geopy.distance
+	coords_1 = (0,0)
+	coords_2 = (lat,lng)
+	return geopy.distance.distance(coords_1,coords_2).m	#Returns distance between them in metres
+"""
+def haversine_dist_between_points(lat,lng):
+	import math
+	coords_1 = (0,0)
+	coords_2 = (lat,lng)
+	radius = 6371  # of earth in km
+    dlat = math.radians(lat - coords_1[0])
+    dlng = math.radians(lng - coords_1[1])
+    a = (math.sin(dlat / 2) * math.sin(dlat / 2) +
+         math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
+         math.sin(dlon / 2) * math.sin(dlon / 2))
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    dist = radius * c
+    return dist*1000	#multiplyied by 1000 to get in meters
+"""
 
 if __name__ == '__main__':
 	app.run(debug=True)
