@@ -7,15 +7,13 @@ Current possible probe- verify whether geolocation is working
 TODO - Check if a person has entered at same day by checking today's date and his email id in the attendance table
 """
 
-from html_table_parser import parser_functions as parse
 import urllib.request
-from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import requests
-import random, string
-#import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request
+#import random, string
+#import datetime
 
 global __login
 global __name
@@ -77,7 +75,6 @@ class User_Attendance(db.Model):
 
 @app.route('/') #'/' represents the 'home_page'
 def home(name = 'Login'):	#Function name can be anything
-	print(dist_between_points(2.3,5.4))
 	return render_template("index.html", text=name)
 
 @app.route('/portal_login')
@@ -93,7 +90,9 @@ def success():
 	for dat in db.session.query(Data):
 		if dat.email==__email :
 				row = dat
-	if speech_verify == "SUCCESS" and dist_between_points(str(lat)+' : '+str(lng), str(row.latitude) + ' : ' + str(row.longtitude)) < 50 :
+
+#				
+	if speech_verify == "SUCCESS" and dist_between_points(lat,lng,row.latitude,row.longtitude) < 50 :
 		temp = get_curr_time()
 		date = temp[0]
 		time = temp[1]
@@ -148,7 +147,7 @@ def about():
 	return "This is the an Attendance System using speech verification and geolocation for verfication purposes."
 
 def get_curr_time():	#Returns Current Date and Time
-	res = urlopen('http://just-the-time.appspot.com/')
+	res = urllib.request.urlopen('http://just-the-time.appspot.com/')
 	result = res.read().strip()
 	strres = result.decode('utf-8')
 	ret_list = []	#(date,time)
@@ -162,10 +161,10 @@ def get_curr_time():	#Returns Current Date and Time
 	print(ret_list[1]) #2020-01-16 16:45:15
 	return ret_list
 
-def dist_between_points(lat,lng):
+def dist_between_points(lat,lng,lat2,lng2):
 	import geopy.distance
-	coords_1 = (0,0)
-	coords_2 = (lat,lng)
+	coords_1 = (lat,lng)
+	coords_2 = (lat2,lng2)
 	return geopy.distance.distance(coords_1,coords_2).m	#Returns distance between them in metres
 """
 def haversine_dist_between_points(lat,lng):
