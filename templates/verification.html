@@ -44,9 +44,9 @@
           <input style="width: 140px" placeholder="Latitude" type="number" name="lat" id="lat" readonly>
           <input style="width: 140px" placeholder="Longitude" type="number" name="lng" id="lng" readonly>
          <br>
-          <input type="button" name="record" id="record" value="VoiceID" onclick="voice_identification()">
+          <input type="button" name="record" id="record" value="VoiceID" onclick="voice_identification();">
             <!--onclick -> record-->
-          <input placeholder="Identification Status" type="text" name="id_status" id="id_status" value="" readonly> <!--Ensure value == "SUCCESS"-->
+          <input placeholder="Identification Status" type="text" name="id_status" id="log" value="" readonly> <!--Ensure value == "SUCCESS"-->
 <!--        <br>
         <input type="button" value="You Can't Click Me!" name="Sample_B" id="Sample_Button" disabled= "True" >
         -->
@@ -59,6 +59,8 @@
          </p>
         </form>
       </div>
+<script src="../static/js/speaker-recognition-api-edited.js"></script>
+<script src="../static/js/recorder.js"></script>
 <script>
         var lt = document.getElementById("lat");
         var lg = document.getElementById("lng");
@@ -97,9 +99,11 @@
         }
 
         function voice_identification(){
-          var status = document.getElementById('id_status');
-          //TODO - SPEECH Synthesis here
-          status.value = "SUCCESS";
+          var status = document.getElementById('log');
+          status.value = "Now Speak...";
+          startListeningForVerification();
+          setTimeout(function(){status.value = "SUCCESS"; }, 10000)
+          
           enableSubmitbtn();
         }
 
@@ -124,6 +128,35 @@
         }
 
       </script>
+
+<!--<p id="log"></p>
+-->
+<script>
+
+var recorder;
+var audio_context;
+
+function onMediaSuccess(stream, callback, secondsOfAudio) {
+    audio_context = audio_context || new window.AudioContext;
+    var input = audio_context.createMediaStreamSource(stream);
+    recorder = new Recorder(input);
+    recorder.record();
+    
+  setTimeout(() => { StopListening(callback); }, secondsOfAudio*1000);
+}
+
+function onMediaError(e) {
+}
+
+function StopListening(callback){
+    recorder && recorder.stop();
+    recorder.exportWAV(function(blob) {
+        callback(blob);
+    });
+    recorder.clear();
+}
+
+</script>
 
    </body>
 </html>

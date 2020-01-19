@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <title>Attendance Portal</title>
+      <title>Admin Panel</title>
       <link rel="stylesheet" href="{{url_for('static' ,filename="css/login.css")}}">
       <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/style.css")}}">
       <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/font-awesome.css")}}">
@@ -13,20 +13,20 @@
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
    </head>
-   <body>
+   <body style="background-image: url(/static/img/bg-1.jpg);">
       <footer class="animated fadeIn">
-         Attendance Portal
+         Admin Panel
       </footer>
 
       <!--Card-->
       <div class="card animated fadeIn">
-         <center><img class="center animated rollIn" src="/static/img/ava.png" alt="avatar"></center>
+         <center><img class="center animated rollIn" src="/static/img/admin-ava.png" alt="avatar"></center>
          <hr>
          <div class="name">
          {{ text | safe }}
      	</div>
-         <p class="subtitle">Officer</p>
-         <form action="/verification" method = "POST">
+         <p class="subtitle">Admin</p>
+         <form action="/admin_options" method = "POST">
             <div class="input">
                 <div class="input-addon">
                     <i class="material-icons">face</i>
@@ -42,6 +42,11 @@
                 </div>
                 <input name="passwd" id="password" placeholder="Password" type="password" required class="validate" autocomplete="off" required>
             </div>
+            <br><center>
+                      <input type="button" name="record" id="record" value="VoiceID" onclick="voice_identification();">
+            <!--onclick -> record-->
+          <input placeholder="Identification Status" type="text" name="id_status" id="log" value="" readonly> 
+         </center>
          <p class="icons animated pulse">
             <a href="/table">
             <span class="fa-stack fa-lg">
@@ -65,5 +70,53 @@
          </p>
         </form>
       </div>
+<script src="../static/js/speaker-recognition-api-edited.js"></script>
+<script src="../static/js/recorder.js"></script>
+<script>
+          function  disableSubmitbtn() {
+          var sbtn = document.getElementById('sub_btn');
+          sbtn.disabled = true;
+        }
+
+        function enableSubmitbtn(){
+          var sbtn = document.getElementById('sub_btn');
+          sbtn.disabled = false;
+        }
+
+        function voice_identification(){
+          var status = document.getElementById('log');
+          status.value = "Now Speak...";
+          startListeningForVerification();
+          setTimeout(function(){status.value = "SUCCESS"; }, 10000)
+          
+          enableSubmitbtn();
+        }
+</script>
+<script>
+
+var recorder;
+var audio_context;
+
+function onMediaSuccess(stream, callback, secondsOfAudio) {
+    audio_context = audio_context || new window.AudioContext;
+    var input = audio_context.createMediaStreamSource(stream);
+    recorder = new Recorder(input);
+    recorder.record();
+    
+  setTimeout(() => { StopListening(callback); }, secondsOfAudio*1000);
+}
+
+function onMediaError(e) {
+}
+
+function StopListening(callback){
+    recorder && recorder.stop();
+    recorder.exportWAV(function(blob) {
+        callback(blob);
+    });
+    recorder.clear();
+}
+
+</script>
    </body>
 </html>

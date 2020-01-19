@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Admin Panel - Add Officer</title>
+      <link rel="stylesheet" href="{{url_for('static' ,filename="css/login.css")}}">
+      <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/style.css")}}">
+      <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/font-awesome.css")}}">
+      <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/animate.css")}}">
+      <link href="https://fonts.googleapis.com/css?family=Montserrat:700" rel="stylesheet">
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+   </head>
+   <body style="background-image: url(/static/img/bg-1.jpg);">
+      <footer class="animated fadeIn">
+         Admin Panel
+      </footer>
+
+      <!--Card-->
+      <div class="card animated fadeIn">
+         <center><img class="center animated rollIn" src="/static/img/admin-ava.png" alt="avatar"></center>
+         <hr>
+         <br><br><br>
+         <form action="/add_officer" method = "POST">
+		<center><input type="text" name="command" value="Add Officer" style="text-align: center; outline: none; border: none;" readonly></center>
+            <br><center><input name="office_id" id="office_id" placeholder="Office ID" type="number" class="validate input" autocomplete="off" required></center>
+            <div class="input">
+                <div class="input-addon">
+                    <i class="material-icons">face</i>
+                </div>
+                <input name="user_id" id="username" placeholder="User Name" type="text" required class="validate" autocomplete="off" required>
+            </div>
+            <div class="input">
+                <div class="input-addon">
+                    <i class="material-icons">email</i>
+                </div>
+                <input name="email" id="email" placeholder="Email ID" type="email" required class="validate" autocomplete="off" required>
+            </div>
+            <div class="clearfix"></div>
+
+            <div class="input">
+                <div class="input-addon">
+                    <i class="material-icons">vpn_key</i>
+                </div>
+                <input name="passwd" id="password" placeholder="Password" type="password" required class="validate" autocomplete="off" required>
+            </div>
+            <br><center><input name="address" id="address" placeholder="Address Of Office" type="text" class="validate input" autocomplete="off" style="height: 40px" required></center>
+            <br><center><input name="district" id="dist" placeholder="District" type="text" class="validate input" autocomplete="off" required></center>
+            <br><center><input name="contact_info" id="contact_info" style="height: 40px" placeholder="Contact Info" type="text" class="validate input" autocomplete="off" required></center>
+            <br><br>
+            <center><input type="button" name="Get Location" value="Get Location" onclick="getLocation()">
+          <input style="width: 140px" placeholder="Latitude" type="number" name="lat" id="lat" readonly>
+          <input style="width: 140px" placeholder="Longitude" type="number" name="lng" id="lng" readonly>
+         <br>
+          <input type="button" name="record" id="record" value="Create VoiceID" onclick="create_voice_identification();">
+            <!--onclick -> record-->
+          <input placeholder="VerificationProfileID" type="text" name="profile_id" id="id_status" value=""></center>
+         <p class="icons animated pulse">
+            <a href="/table">
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-info-circle fa-stack-1x"></i>
+            </span>
+            </a>
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-stack-1x"></i>
+            </span>
+            <input id="sub_button" type="submit" value="Add Officer"/>
+            </a>
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-stack-1x"></i>
+            </span>
+            <a href="https://nyks.nic.in/" target="_blank">
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-history fa-stack-2x"></i>
+                <i class="fa fa-stack-1x"></i>
+            </span>
+            </a>
+         </p>
+        </form>
+      </div>
+      <script>
+      	function create_voice_identification(){
+      		/*######*/
+      		return;
+      	}
+      </script>
+      <script>
+        var lt = document.getElementById("lat");
+        var lg = document.getElementById("lng");
+
+       function getLocation() {
+                lt.type = "text";
+                lg.type = "text";
+                lt.value = "Loading...";
+                lg.value = "Loading...";
+
+        if(navigator.geolocation){
+          navigator.geolocation.getCurrentPosition(showPosition); }
+        else{
+          lt.type = "number";
+          lg.type = "number";
+          lt.value = "-181";
+          lg.value = "-91";
+        }
+        }
+
+        function showPosition(position) {
+          lt.type = "number";
+          lg.type = "number";
+  lt.value = position.coords.latitude;
+  lg.value = position.coords.longitude;    
+        }
+
+        function  disableSubmitbtn() {
+          var sbtn = document.getElementById('sub_btn');
+          sbtn.disabled = true;
+        }
+
+        function enableSubmitbtn(){
+          var sbtn = document.getElementById('sub_btn');
+          sbtn.disabled = false;
+        }
+
+   </body>
+</html>

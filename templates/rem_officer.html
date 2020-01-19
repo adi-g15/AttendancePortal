@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <title>Attendance Portal</title>
+      <title>Admin Panel - Add Officer</title>
       <link rel="stylesheet" href="{{url_for('static' ,filename="css/login.css")}}">
       <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/style.css")}}">
       <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/font-awesome.css")}}">
@@ -13,27 +13,30 @@
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
    </head>
-   <body>
+   <body style="background-image: url(/static/img/bg-1.jpg);">
       <footer class="animated fadeIn">
-         Attendance Portal
+         Admin Panel
       </footer>
 
       <!--Card-->
       <div class="card animated fadeIn">
-         <center><img class="center animated rollIn" src="/static/img/ava.png" alt="avatar"></center>
+         <center><img class="center animated rollIn" src="/static/img/admin-ava.png" alt="avatar"></center>
          <hr>
-         <div class="name">
-         {{ text | safe }}
-     	</div>
-         <p class="subtitle">Officer</p>
-         <form action="/verification" method = "POST">
+         <br><br><br>
+         <form action="/admin_verification" method = "POST">
+		<center><input type="text" name="Command" value="Add Officer" style="text-align: center; outline: none; border: none;" readonly></center>
             <div class="input">
                 <div class="input-addon">
                     <i class="material-icons">face</i>
                 </div>
-                <input name="user_id" id="username" placeholder="Email ID" type="email" required class="validate" autocomplete="off" required>
+                <input name="user_id" id="username" placeholder="User Name" type="text" required class="validate" autocomplete="off" required>
             </div>
-
+            <div class="input">
+                <div class="input-addon">
+                    <i class="material-icons">email</i>
+                </div>
+                <input name="email" id="email" placeholder="Email ID" type="email" required class="validate" autocomplete="off" required>
+            </div>
             <div class="clearfix"></div>
 
             <div class="input">
@@ -42,6 +45,14 @@
                 </div>
                 <input name="passwd" id="password" placeholder="Password" type="password" required class="validate" autocomplete="off" required>
             </div>
+            <br><br>
+            <input type="button" name="Get Location" value="Get Location" onclick="getLocation()">
+          <input style="width: 140px" placeholder="Latitude" type="number" name="lat" id="lat" readonly>
+          <input style="width: 140px" placeholder="Longitude" type="number" name="lng" id="lng" readonly>
+         <br>
+          <input type="button" name="record" id="record" value="VoiceID" onclick="voice_identification();">
+            <!--onclick -> record-->
+          <input placeholder="Identification Status" type="text" name="id_status" id="log" value="" readonly>
          <p class="icons animated pulse">
             <a href="/table">
             <span class="fa-stack fa-lg">

@@ -2,7 +2,7 @@
 
 <html>
    <head>
-      <title>Attendance Portal</title>
+      <title>Admin Panel</title>
       <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/style.css")}}">
       <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/font-awesome.css")}}">
       <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/animate.css")}}">
@@ -19,24 +19,31 @@
         }
       </style>
       <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
    </head>
-   <body>
+   <body style="background-image: url(/static/img/bg-1.jpg);">
       
       <footer class="animated fadeIn">
-        Attendance Portal
+        Admin Panel
       </footer>
 
       <!--Card-->
       <div class="card animated fadeIn">
-         <center><img class="center animated rollIn" src="/static/img/ava.png" alt="avatar"></center>
+         <center><img class="center animated rollIn" src="/static/img/admin-ava.png" alt="avatar"></center>
          <hr>
          <div class="name">
          {{ text | safe }}
        </div>
-         <p class="subtitle">Officer</p>
-         <center><h5>Records Successfully Updated</h5></center>
+         <p class="subtitle">Admin</p>
+         <center>
+          <a href="">Add Officer Record</a>
+          <hr>
+          <a href="">Remove Officer Record</a>
+          <hr>
+          <a href="">Get Attendance Info</a>
+          <hr>
+          <p style="pointer : ">
+         </center>
          <p></p>
    </body>
 </html>

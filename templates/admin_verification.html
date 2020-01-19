@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!--FURTHER - Add a 'Retries' column in the table to hold number of retries for the voice recognition, which may further be used for detecting problems for a particular user_id-->
+<html>
+   <head>
+      <title>Admin Panel</title>
+      <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/style.css")}}">
+      <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/font-awesome.css")}}">
+      <link rel="stylesheet" type="text/css" href="{{url_for('static' ,filename="css/animate.css")}}">
+      <link rel="shortcut icon" href="{{url_for('static' ,filename="img/fav.ico")}}" type="image/x-icon">
+      <link href="https://fonts.googleapis.com/css?family=Montserrat:700" rel="stylesheet">
+      <style>
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {  /* For Other than Firefox */
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        input[type=number] {  /*For Firefox*/
+          -moz-appearance:textfield;
+        }
+      </style>
+
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+   </head>
+   <body style="background-image: url(/static/img/bg-1.jpg);">
+      <footer class="animated fadeIn">  <!--These animations themselves are from some other on github... give copyright credit to that too-->
+         Admin Panel
+      </footer>
+
+      <!--Card-->
+      <div class="card animated fadeIn">
+         <center><img class="center animated rollIn" src="/static/img/admin-ava.png" alt="avatar"></center>
+         <hr>
+         <div class="name">
+         {{ text | safe }}
+       </div>
+         <p class="subtitle">Admin</p>
+
+          <input type="button" name="record" id="record" value="VoiceID" onclick="voice_identification()">
+            <!--onclick -> record-->
+          <input placeholder="Identification Status" type="text" name="id_status" id="id_status" value="" readonly> <!--Ensure value == "SUCCESS"-->
+<!--        <br>
+        <input type="button" value="You Can't Click Me!" name="Sample_B" id="Sample_Button" disabled= "True" >
+        -->
+<!--        <center><img onclick="voice_identification()" class="" src="/static/img/mic-icon.png" alt="mic" width="15px" height="65px"></center>
+-->
+<!--TODO - Remove Icons as well as keeping the records safely-->
+         <p class="icons">  <!--This 'icons' class is causing the grey colours, may remove before Hackathon-->
+            <input type="submit" name="Submit" disabled="False" id="sub_btn" value="Done">
+            <!--Disable it at start itself-->
+         </p>
+        </form>
+      </div>
+<script>
+        function  disableSubmitbtn() {
+          var sbtn = document.getElementById('sub_btn');
+          sbtn.disabled = true;
+        }
+
+        function enableSubmitbtn(){
+          var sbtn = document.getElementById('sub_btn');
+          sbtn.disabled = false;
+        }
+        function voice_identification(){
+          var status = document.getElementById('id_status');
+          //TODO - SPEECH Synthesis here
+          status.value = "SUCCESS";
+          enableSubmitbtn();
+        }
+
+//No need for Submit_Record(), that things WILL also be done by voice_identification, at end of itself, then only enable the button, and '/success' will also look into the passed variables, so as to prevent the case where the button was activated manually
+        function Submit_Record(){
+          //TODO - Check content of both input to check whether they are correct
+          //if everything alright return true
+          return true;
+          //else return false
+        }
+      </script>
+
+   </body>
+</html>
