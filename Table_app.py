@@ -23,8 +23,7 @@ __admin_email = 'admin@none.si'
 
 
 app = Flask(__name__)	#instantiating the class with __name__
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:15035@localhost/data'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://pwxrydafvrmfcl:6412326133c93c304a373c0b02c8e434a493f89bc8e1370881695a82d4b08a4b@ec2-107-20-173-2.compute-1.amazonaws.com:5432/d4ja5ips6mte0?sslmode=require'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:15035@localhost/data'
 db = SQLAlchemy(app)	#SQLAlchemy Object
 
 class Data(db.Model):	#Table of officer names
@@ -161,10 +160,10 @@ def admin_options():
 	global __admin_login
 	__admin_login	= False
 	if db.session.query(AdminData).filter(AdminData.email == email).count() == 1:
-		for adat in db.session.query(AdminData):
-			if adat.passwd==pwd :
-				__admin_name = adat.name
-				__admin_email = adat.email
+		for admDat in db.session.query(AdminData):
+			if admDat.passwd==pwd :
+				__admin_name = admDat.name
+				__admin_email = admDat.email
 				__admin_login = True
 	else:
 		__admin_login = False
@@ -254,7 +253,7 @@ def success():
 		return home()		
 
 @app.route('/table')	
-def table():
+def table():	#Prints the table of offices
 	target = 'https://nyks.nic.in/compile/zdaddress.aspx'
 	req = urllib.request.Request( url = target)
 	f = urllib.request.urlopen(req)	#The actual HTTP Response
@@ -265,7 +264,7 @@ def table():
 
 @app.route('/about')
 def about():
-	return "This is the an Attendance System using speech verification and geolocation for verfication purposes."
+	return "This is the an Attendance Portal using speech verification and geolocation for verfication purposes."
 
 def get_curr_time():	#Returns Current Date and Time
 	res = urllib.request.urlopen('http://just-the-time.appspot.com/')
@@ -288,21 +287,6 @@ def dist_between_points(lat,lng,lat2,lng2):
 	coords_2 = (lat2,lng2)
 	return geopy.distance.distance(coords_1,coords_2).m	#Returns distance between them in metres
 
-"""
-def haversine_dist_between_points(lat,lng):
-	import math
-	coords_1 = (0,0)
-	coords_2 = (lat,lng)
-	radius = 6371  # of earth in km
-    dlat = math.radians(lat - coords_1[0])
-    dlng = math.radians(lng - coords_1[1])
-    a = (math.sin(dlat / 2) * math.sin(dlat / 2) +
-         math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
-         math.sin(dlon / 2) * math.sin(dlon / 2))
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    dist = radius * c
-    return dist*1000	#multiplyied by 1000 to get in meters
-"""
 if __name__ == '__main__':
 	app.run(debug=True)
 
