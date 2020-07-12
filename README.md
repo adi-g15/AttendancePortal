@@ -1,6 +1,8 @@
 # ProtoMain
 Attendance Portal WebApp with GPS, and voice verifications included
 
+Completed by the DevHack1.0 team, including Abhishek Rukmani, [Abhishek](https://github.com/abhishekjaiswal3158), Abhay, Rabin, Rahul, and [me](https://github.com/AdityaGupta150).
+
 For the DevHack1.0 team -
   Install all python packages given in requirements.txt
   To deploy it to your localhost, run 'python Table_app.py' Now, just open 'localhost:5000' in your browser
