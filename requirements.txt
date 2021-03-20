@@ -11,7 +11,7 @@ gunicorn==20.0.4
 html-table-parser==0.1.0
 idna==2.8
 itsdangerous==1.1.0
-Jinja2==2.10.3
+Jinja2==2.11.3
 MarkupSafe==1.1.1
 psycopg2==2.8.4
 requests==2.22.0
